@@ -2,27 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Network Dashboard</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>VPS Monitor</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet" />
     <style>
       :root {
-        --bg: #0a0c10;
-        --surface: #111318;
-        --surface2: #181c24;
-        --border: rgba(255, 255, 255, 0.07);
-        --border-bright: rgba(255, 255, 255, 0.13);
-        --accent: #00e5ff;
-        --accent2: #7c4dff;
-        --green: #00e676;
-        --amber: #ffab40;
-        --red: #ff5252;
-        --text: #e8eaf0;
-        --muted: #6b7280;
-        --font-mono: "JetBrains Mono", monospace;
-        --font-display: "Syne", sans-serif;
+        --bg: #080b0f;
+        --s1: #0d1117;
+        --s2: #161b22;
+        --s3: #1f2937;
+        --border: rgba(255, 255, 255, 0.06);
+        --border2: rgba(255, 255, 255, 0.12);
+        --cyan: #00e5ff;
+        --purple: #a78bfa;
+        --green: #34d399;
+        --amber: #fbbf24;
+        --red: #f87171;
+        --pink: #f472b6;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --mono: "JetBrains Mono", monospace;
+        --sans: "Space Grotesk", sans-serif;
       }
       *,
       *::before,
@@ -36,92 +38,84 @@
         height: 100%;
         background: var(--bg);
         color: var(--text);
-        font-family: var(--font-display);
+        font-family: var(--sans);
         overflow-x: hidden;
       }
-
-      /* scrollbar */
       ::-webkit-scrollbar {
-        width: 4px;
+        width: 3px;
       }
       ::-webkit-scrollbar-track {
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: var(--border-bright);
+        background: var(--border2);
         border-radius: 2px;
       }
 
-      /* layout */
-      .app {
-        min-height: 100vh;
-        padding: 0 0 2rem;
-      }
-
-      /* header */
+      /* ── header ── */
       header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 1.25rem 2rem;
+        padding: 1rem 1.5rem;
         border-bottom: 1px solid var(--border);
-        background: rgba(10, 12, 16, 0.9);
+        background: rgba(8, 11, 15, 0.95);
         position: sticky;
         top: 0;
         z-index: 100;
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(16px);
       }
       .logo {
         display: flex;
         align-items: center;
         gap: 10px;
       }
-      .logo-dot {
+      .logo-pulse {
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: var(--accent);
+        background: var(--cyan);
         animation: pulse 2s ease-in-out infinite;
       }
       @keyframes pulse {
         0%,
         100% {
-          opacity: 1;
-          box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4);
+          box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.5);
         }
         50% {
-          opacity: 0.7;
-          box-shadow: 0 0 0 6px rgba(0, 229, 255, 0);
+          box-shadow: 0 0 0 8px rgba(0, 229, 255, 0);
         }
       }
       .logo-text {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--accent);
+        color: var(--cyan);
       }
       .header-right {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
       }
-      .status-pill {
+      .pill {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 5px 12px;
+        gap: 5px;
+        padding: 4px 10px;
         border-radius: 99px;
-        background: rgba(0, 230, 118, 0.1);
-        border: 1px solid rgba(0, 230, 118, 0.25);
         font-size: 11px;
+        font-family: var(--mono);
         font-weight: 500;
-        color: var(--green);
-        font-family: var(--font-mono);
       }
-      .status-dot {
-        width: 6px;
-        height: 6px;
+      .pill-live {
+        background: rgba(52, 211, 153, 0.1);
+        border: 1px solid rgba(52, 211, 153, 0.25);
+        color: var(--green);
+      }
+      .pill-dot {
+        width: 5px;
+        height: 5px;
         border-radius: 50%;
         background: var(--green);
         animation: pulse 1.5s ease-in-out infinite;
@@ -129,163 +123,385 @@
       .ts {
         font-size: 11px;
         color: var(--muted);
-        font-family: var(--font-mono);
+        font-family: var(--mono);
       }
 
-      /* grid */
-      .grid {
-        display: grid;
-        gap: 1px;
-        padding: 1px;
-        background: var(--border);
-      }
-      .main-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1px;
-        background: var(--border);
-        margin: 1.5rem 2rem 0;
-      }
-      .content-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin: 16px 2rem 0;
-      }
-      .full-width {
-        margin: 16px 2rem 0;
-      }
-
-      /* stat card */
-      .stat-card {
-        background: var(--surface);
+      /* ── layout ── */
+      .wrap {
         padding: 1.25rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      /* ── stat row ── */
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+      }
+      .stat {
+        background: var(--s1);
+        padding: 1rem 1.25rem;
         position: relative;
         overflow: hidden;
+        transition: background 0.2s;
       }
-      .stat-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-      .stat-card:hover::before {
-        opacity: 1;
+      .stat:hover {
+        background: var(--s2);
       }
       .stat-label {
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 700;
         letter-spacing: 0.12em;
         text-transform: uppercase;
         color: var(--muted);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
-      .stat-value {
-        font-size: 28px;
-        font-weight: 800;
+      .stat-val {
+        font-size: 22px;
+        font-weight: 700;
+        font-family: var(--mono);
         line-height: 1;
-        color: var(--text);
-        font-family: var(--font-mono);
-      }
-      .stat-value.accent {
-        color: var(--accent);
-      }
-      .stat-value.green {
-        color: var(--green);
-      }
-      .stat-value.amber {
-        color: var(--amber);
       }
       .stat-sub {
-        font-size: 11px;
+        font-size: 10px;
         color: var(--muted);
-        margin-top: 6px;
-        font-family: var(--font-mono);
+        margin-top: 5px;
+        font-family: var(--mono);
+      }
+      .c-cyan {
+        color: var(--cyan);
+      }
+      .c-purple {
+        color: var(--purple);
+      }
+      .c-green {
+        color: var(--green);
+      }
+      .c-amber {
+        color: var(--amber);
+      }
+      .c-red {
+        color: var(--red);
+      }
+      .c-pink {
+        color: var(--pink);
       }
 
-      /* panel */
+      /* ── grid ── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1.25rem;
+      }
+
+      /* ── panel ── */
       .panel {
-        background: var(--surface);
+        background: var(--s1);
         border: 1px solid var(--border);
-        border-radius: 2px;
         overflow: hidden;
       }
-      .panel-header {
+      .panel-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 1.25rem;
+        padding: 0.6rem 1rem;
         border-bottom: 1px solid var(--border);
-        background: var(--surface2);
+        background: var(--s2);
       }
       .panel-title {
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
         color: var(--muted);
       }
-      .panel-badge {
-        font-size: 10px;
-        font-family: var(--font-mono);
-        padding: 2px 8px;
+      .badge {
+        font-size: 9px;
+        font-family: var(--mono);
+        padding: 2px 7px;
         border-radius: 99px;
-        background: rgba(0, 229, 255, 0.1);
-        color: var(--accent);
-        border: 1px solid rgba(0, 229, 255, 0.2);
+        background: rgba(0, 229, 255, 0.08);
+        color: var(--cyan);
+        border: 1px solid rgba(0, 229, 255, 0.18);
+      }
+      .badge-green {
+        background: rgba(52, 211, 153, 0.08);
+        color: var(--green);
+        border-color: rgba(52, 211, 153, 0.18);
+      }
+      .badge-amber {
+        background: rgba(251, 191, 36, 0.08);
+        color: var(--amber);
+        border-color: rgba(251, 191, 36, 0.18);
+      }
+      .badge-red {
+        background: rgba(248, 113, 113, 0.08);
+        color: var(--red);
+        border-color: rgba(248, 113, 113, 0.18);
       }
       .panel-body {
-        padding: 1rem 1.25rem;
+        padding: 0.875rem 1rem;
       }
 
-      /* throughput chart */
+      /* ── chart ── */
       .chart-wrap {
+        height: 100px;
         position: relative;
-        height: 120px;
       }
       canvas {
         width: 100% !important;
       }
-
-      /* throughput numbers */
-      .throughput-row {
+      .chart-legend {
         display: flex;
-        gap: 2rem;
-        margin-bottom: 1rem;
+        gap: 1rem;
+        margin-bottom: 0.6rem;
       }
-      .tp-item {
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10px;
+        font-family: var(--mono);
+        color: var(--muted);
+      }
+      .legend-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+
+      /* ── tp numbers ── */
+      .tp-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 0.75rem;
       }
       .tp-label {
-        font-size: 10px;
+        font-size: 9px;
         letter-spacing: 0.1em;
         text-transform: uppercase;
         color: var(--muted);
-        margin-bottom: 4px;
+        margin-bottom: 3px;
       }
       .tp-val {
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 700;
-        font-family: var(--font-mono);
-      }
-      .tp-val.in {
-        color: var(--accent);
-      }
-      .tp-val.out {
-        color: var(--accent2);
+        font-family: var(--mono);
       }
       .tp-unit {
-        font-size: 12px;
-        font-weight: 400;
+        font-size: 11px;
         color: var(--muted);
-        margin-left: 4px;
+        margin-left: 2px;
       }
 
-      /* interfaces table */
+      /* ── bar ── */
+      .bar-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .bar-item {
+      }
+      .bar-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        font-family: var(--mono);
+        color: var(--muted);
+        margin-bottom: 3px;
+      }
+      .bar-track {
+        height: 3px;
+        background: var(--s3);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 0.6s ease;
+      }
+      .bar-fill-cyan {
+        background: var(--cyan);
+      }
+      .bar-fill-green {
+        background: var(--green);
+      }
+      .bar-fill-amber {
+        background: var(--amber);
+      }
+      .bar-fill-red {
+        background: var(--red);
+      }
+      .bar-fill-purple {
+        background: var(--purple);
+      }
+
+      /* ── cpu cores grid ── */
+      .cores-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .core-item {
+        background: var(--s2);
+        padding: 6px 8px;
+      }
+      .core-label {
+        font-size: 9px;
+        color: var(--muted);
+        font-family: var(--mono);
+        margin-bottom: 4px;
+      }
+      .core-val {
+        font-size: 13px;
+        font-weight: 700;
+        font-family: var(--mono);
+        color: var(--cyan);
+      }
+
+      /* ── sys grid ── */
+      .sys-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .sys-item {
+        background: var(--s2);
+        padding: 8px 10px;
+      }
+      .sys-key {
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 3px;
+      }
+      .sys-val {
+        font-size: 12px;
+        font-weight: 500;
+        font-family: var(--mono);
+      }
+
+      /* ── load ── */
+      .load-row {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+      }
+      .load-item {
+        flex: 1;
+        background: var(--s2);
+        padding: 8px 10px;
+        text-align: center;
+      }
+      .load-label {
+        font-size: 9px;
+        color: var(--muted);
+        font-family: var(--mono);
+        margin-bottom: 4px;
+      }
+      .load-val {
+        font-size: 16px;
+        font-weight: 700;
+        font-family: var(--mono);
+        color: var(--amber);
+      }
+
+      /* ── table ── */
+      .tbl {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .tbl th {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 6px 10px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        background: var(--s2);
+      }
+      .tbl td {
+        font-size: 11px;
+        font-family: var(--mono);
+        padding: 7px 10px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      .tbl tr:last-child td {
+        border-bottom: none;
+      }
+      .tbl tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-3px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .tbl tbody tr {
+        animation: fadeIn 0.25s ease;
+      }
+
+      /* ── badges ── */
+      .tag {
+        display: inline-block;
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 99px;
+        font-family: var(--mono);
+      }
+      .tag-cyan {
+        background: rgba(0, 229, 255, 0.1);
+        color: var(--cyan);
+        border: 1px solid rgba(0, 229, 255, 0.2);
+      }
+      .tag-green {
+        background: rgba(52, 211, 153, 0.1);
+        color: var(--green);
+        border: 1px solid rgba(52, 211, 153, 0.2);
+      }
+      .tag-amber {
+        background: rgba(251, 191, 36, 0.1);
+        color: var(--amber);
+        border: 1px solid rgba(251, 191, 36, 0.2);
+      }
+      .tag-red {
+        background: rgba(248, 113, 113, 0.1);
+        color: var(--red);
+        border: 1px solid rgba(248, 113, 113, 0.2);
+      }
+      .tag-purple {
+        background: rgba(167, 139, 250, 0.1);
+        color: var(--purple);
+        border: 1px solid rgba(167, 139, 250, 0.2);
+      }
+      .tag-muted {
+        background: rgba(100, 116, 139, 0.1);
+        color: var(--muted);
+        border: 1px solid rgba(100, 116, 139, 0.2);
+      }
+
+      /* ── iface ── */
       .iface-list {
         display: flex;
         flex-direction: column;
@@ -293,272 +509,208 @@
       }
       .iface-row {
         display: grid;
-        grid-template-columns: 1fr 1fr auto;
+        grid-template-columns: 120px 1fr 60px;
         gap: 8px;
         align-items: center;
-        padding: 10px 12px;
-        background: var(--surface2);
-        font-size: 12px;
-        font-family: var(--font-mono);
+        padding: 8px 10px;
+        background: var(--s2);
+        font-size: 11px;
+        font-family: var(--mono);
         transition: background 0.15s;
       }
       .iface-row:hover {
-        background: rgba(255, 255, 255, 0.04);
-      }
-      .iface-name {
-        font-weight: 500;
-        color: var(--text);
-      }
-      .iface-addr {
-        color: var(--accent);
-      }
-      .iface-family {
-        font-size: 10px;
-        padding: 2px 7px;
-        border-radius: 99px;
-        text-align: center;
-      }
-      .iface-family.v4 {
-        background: rgba(0, 229, 255, 0.1);
-        color: var(--accent);
-        border: 1px solid rgba(0, 229, 255, 0.2);
-      }
-      .iface-family.v6 {
-        background: rgba(124, 77, 255, 0.1);
-        color: var(--accent2);
-        border: 1px solid rgba(124, 77, 255, 0.2);
-      }
-      .iface-family.loop {
-        background: rgba(107, 114, 128, 0.1);
-        color: var(--muted);
-        border: 1px solid rgba(107, 114, 128, 0.2);
+        background: var(--s3);
       }
 
-      /* connections table */
-      .conn-header {
-        display: grid;
-        grid-template-columns: 60px 1fr 1fr 100px 90px;
-        gap: 8px;
-        padding: 6px 12px;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-        border-bottom: 1px solid var(--border);
-      }
-      .conn-row {
-        display: grid;
-        grid-template-columns: 60px 1fr 1fr 100px 90px;
-        gap: 8px;
-        align-items: center;
-        padding: 9px 12px;
-        font-size: 11px;
-        font-family: var(--font-mono);
-        border-bottom: 1px solid var(--border);
-        transition: background 0.15s;
-        animation: fadeIn 0.3s ease;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-4px);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-      .conn-row:hover {
-        background: rgba(255, 255, 255, 0.03);
-      }
-      .proto {
-        font-weight: 700;
-        color: var(--amber);
-      }
-      .addr {
-        color: var(--muted);
-      }
-      .addr span {
-        color: var(--text);
-      }
-      .service-badge {
-        font-size: 10px;
-        padding: 2px 7px;
-        border-radius: 99px;
-        background: rgba(255, 171, 64, 0.1);
-        color: var(--amber);
-        border: 1px solid rgba(255, 171, 64, 0.2);
-        display: inline-block;
-      }
-      .state {
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-      }
-      .state.ESTABLISHED {
-        color: var(--green);
-      }
-      .state.LISTEN {
-        color: var(--accent);
-      }
-      .state.TIME_WAIT {
-        color: var(--muted);
-      }
-      .state.CLOSE_WAIT {
-        color: var(--amber);
-      }
-      .state.STATELESS {
-        color: var(--muted);
-      }
-
-      /* system info */
-      .sys-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+      /* ── disk ── */
+      .disk-list {
+        display: flex;
+        flex-direction: column;
         gap: 8px;
       }
-      .sys-item {
+      .disk-item {
+        background: var(--s2);
         padding: 10px 12px;
-        background: var(--surface2);
       }
-      .sys-key {
-        font-size: 10px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-bottom: 4px;
-      }
-      .sys-val {
-        font-size: 13px;
-        font-weight: 500;
-        font-family: var(--font-mono);
-        color: var(--text);
-      }
-
-      /* memory bar */
-      .mem-bar-wrap {
-        margin-top: 12px;
-      }
-      .mem-bar-label {
+      .disk-meta {
         display: flex;
         justify-content: space-between;
-        font-size: 11px;
-        font-family: var(--font-mono);
-        color: var(--muted);
+        align-items: center;
         margin-bottom: 6px;
       }
-      .mem-bar-track {
-        height: 4px;
-        background: var(--surface2);
-        border-radius: 2px;
-        overflow: hidden;
+      .disk-mount {
+        font-size: 12px;
+        font-weight: 600;
+        font-family: var(--mono);
       }
-      .mem-bar-fill {
-        height: 100%;
-        background: var(--accent);
-        border-radius: 2px;
-        transition: width 0.5s ease;
-      }
-      .mem-bar-fill.warn {
-        background: var(--amber);
-      }
-      .mem-bar-fill.crit {
-        background: var(--red);
+      .disk-info {
+        font-size: 10px;
+        color: var(--muted);
+        font-family: var(--mono);
       }
 
-      @media (max-width: 900px) {
-        .main-grid {
+      /* ── state colors ── */
+      .ESTABLISHED {
+        color: var(--green);
+      }
+      .LISTEN {
+        color: var(--cyan);
+      }
+      .TIME_WAIT {
+        color: var(--muted);
+      }
+      .CLOSE_WAIT {
+        color: var(--amber);
+      }
+      .STATELESS {
+        color: var(--muted);
+      }
+
+      /* ── docker ── */
+      .docker-running {
+        color: var(--green);
+      }
+      .docker-stopped {
+        color: var(--red);
+      }
+
+      @media (max-width: 1100px) {
+        .stat-row {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-3 {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 700px) {
+        .stat-row {
           grid-template-columns: repeat(2, 1fr);
         }
-        .content-grid {
+        .grid-2,
+        .grid-3 {
           grid-template-columns: 1fr;
-        }
-        .conn-header,
-        .conn-row {
-          grid-template-columns: 60px 1fr 80px 80px;
-        }
-        .conn-header > *:nth-child(3),
-        .conn-row > *:nth-child(3) {
-          display: none;
         }
       }
     </style>
   </head>
   <body>
-    <div class="app">
-      <header>
-        <div class="logo">
-          <div class="logo-dot"></div>
-          <span class="logo-text">NetMonitor</span>
+    <header>
+      <div class="logo">
+        <div class="logo-pulse"></div>
+        <span class="logo-text">VPS Monitor</span>
+      </div>
+      <div class="header-right">
+        <div class="pill pill-live">
+          <div class="pill-dot"></div>
+          Live
         </div>
-        <div class="header-right">
-          <div class="status-pill">
-            <div class="status-dot"></div>
-            Live
-          </div>
-          <span class="ts" id="timestamp">--:--:--</span>
-        </div>
-      </header>
+        <span class="ts" id="ts">--:--:--</span>
+      </div>
+    </header>
 
-      <!-- stat cards -->
-      <div class="main-grid">
-        <div class="stat-card">
+    <div class="wrap">
+      <!-- stat strip -->
+      <div class="stat-row">
+        <div class="stat">
           <div class="stat-label">Inbound</div>
-          <div class="stat-value accent" id="stat-in">0 B/s</div>
-          <div class="stat-sub" id="stat-in-sub">incoming traffic</div>
+          <div class="stat-val c-cyan" id="s-in">0 B/s</div>
+          <div class="stat-sub">network in</div>
         </div>
-        <div class="stat-card">
+        <div class="stat">
           <div class="stat-label">Outbound</div>
-          <div class="stat-value" style="color: #7c4dff" id="stat-out">0 B/s</div>
-          <div class="stat-sub" id="stat-out-sub">outgoing traffic</div>
+          <div class="stat-val c-purple" id="s-out">0 B/s</div>
+          <div class="stat-sub">network out</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Active connections</div>
-          <div class="stat-value amber" id="stat-conns">0</div>
-          <div class="stat-sub" id="stat-conns-sub">open sockets</div>
+        <div class="stat">
+          <div class="stat-label">CPU Usage</div>
+          <div class="stat-val c-amber" id="s-cpu">0%</div>
+          <div class="stat-sub" id="s-cpu-sub">— cores</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Free memory</div>
-          <div class="stat-value green" id="stat-mem">— GB</div>
-          <div class="stat-sub" id="stat-mem-sub">of — GB total</div>
+        <div class="stat">
+          <div class="stat-label">Memory</div>
+          <div class="stat-val c-green" id="s-mem">—</div>
+          <div class="stat-sub" id="s-mem-sub">— GB total</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Load (1m)</div>
+          <div class="stat-val c-pink" id="s-load">—</div>
+          <div class="stat-sub" id="s-load-sub">5m / 15m</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Uptime</div>
+          <div class="stat-val c-cyan" id="s-uptime">—</div>
+          <div class="stat-sub" id="s-host">—</div>
         </div>
       </div>
 
-      <!-- throughput + system -->
-      <div class="content-grid">
+      <!-- throughput + cpu -->
+      <div class="grid-2">
         <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">Throughput</span>
-            <span class="panel-badge" id="badge-tp">30s window</span>
+          <div class="panel-head">
+            <span class="panel-title">Network Throughput</span
+            ><span class="badge" id="b-tp">60s window</span>
           </div>
           <div class="panel-body">
-            <div class="throughput-row">
-              <div class="tp-item">
+            <div class="tp-row">
+              <div>
                 <div class="tp-label">In</div>
-                <div class="tp-val in" id="tp-in">0 <span class="tp-unit">B/s</span></div>
+                <div class="tp-val c-cyan" id="tp-in">0<span class="tp-unit">B/s</span></div>
               </div>
-              <div class="tp-item">
+              <div>
                 <div class="tp-label">Out</div>
-                <div class="tp-val out" id="tp-out">0 <span class="tp-unit">B/s</span></div>
+                <div class="tp-val c-purple" id="tp-out">0<span class="tp-unit">B/s</span></div>
               </div>
             </div>
-            <div class="chart-wrap">
-              <canvas id="throughput-chart" height="120"></canvas>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--cyan)"></div>
+                Inbound
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--purple)"></div>
+                Outbound
+              </div>
             </div>
+            <div class="chart-wrap"><canvas id="tp-chart" height="100"></canvas></div>
           </div>
         </div>
 
         <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">System</span>
-            <span class="panel-badge" id="badge-host">—</span>
+          <div class="panel-head">
+            <span class="panel-title">CPU Per Core</span
+            ><span class="badge" id="b-cores">— cores</span>
+          </div>
+          <div class="panel-body">
+            <div class="sys-item" style="margin-bottom: 8px">
+              <div class="sys-key">Model</div>
+              <div class="sys-val" id="cpu-model">—</div>
+            </div>
+            <div class="bar-item" style="margin-bottom: 8px">
+              <div class="bar-meta"><span>Total CPU</span><span id="cpu-total-pct">0%</span></div>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill-amber" id="cpu-total-bar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="cores-grid" id="cores-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- system + load + memory -->
+      <div class="grid-3">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">System Info</span><span class="badge" id="b-host">—</span>
           </div>
           <div class="panel-body">
             <div class="sys-grid">
               <div class="sys-item">
                 <div class="sys-key">Hostname</div>
-                <div class="sys-val" id="sys-host">—</div>
+                <div class="sys-val" id="sys-hostname">—</div>
+              </div>
+              <div class="sys-item">
+                <div class="sys-key">Distro</div>
+                <div class="sys-val" id="sys-distro">—</div>
               </div>
               <div class="sys-item">
                 <div class="sys-key">Platform</div>
@@ -569,89 +721,219 @@
                 <div class="sys-val" id="sys-arch">—</div>
               </div>
               <div class="sys-item">
-                <div class="sys-key">CPU cores</div>
+                <div class="sys-key">CPU Cores</div>
                 <div class="sys-val" id="sys-cores">—</div>
               </div>
-              <div class="sys-item" style="grid-column: span 2">
-                <div class="sys-key">CPU model</div>
-                <div class="sys-val" id="sys-cpu">—</div>
+              <div class="sys-item">
+                <div class="sys-key">Uptime</div>
+                <div class="sys-val" id="sys-uptime">—</div>
               </div>
             </div>
-            <div class="mem-bar-wrap">
-              <div class="mem-bar-label">
-                <span>Memory usage</span>
-                <span id="mem-pct">—%</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Load Average</span><span class="badge">system load</span>
+          </div>
+          <div class="panel-body">
+            <div class="load-row">
+              <div class="load-item">
+                <div class="load-label">1 min</div>
+                <div class="load-val" id="load-1">—</div>
               </div>
-              <div class="mem-bar-track">
-                <div class="mem-bar-fill" id="mem-bar" style="width: 0%"></div>
+              <div class="load-item">
+                <div class="load-label">5 min</div>
+                <div class="load-val" id="load-5">—</div>
+              </div>
+              <div class="load-item">
+                <div class="load-label">15 min</div>
+                <div class="load-val" id="load-15">—</div>
+              </div>
+            </div>
+            <div class="bar-item" style="margin-top: 12px">
+              <div class="bar-meta">
+                <span>Relative to core count</span><span id="load-pct">—</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill-amber" id="load-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Memory</span><span class="badge" id="b-mem">—</span>
+          </div>
+          <div class="panel-body">
+            <div class="sys-grid" style="margin-bottom: 10px">
+              <div class="sys-item">
+                <div class="sys-key">Total</div>
+                <div class="sys-val" id="mem-total">—</div>
+              </div>
+              <div class="sys-item">
+                <div class="sys-key">Free</div>
+                <div class="sys-val c-green" id="mem-free">—</div>
+              </div>
+              <div class="sys-item">
+                <div class="sys-key">Used</div>
+                <div class="sys-val c-amber" id="mem-used">—</div>
+              </div>
+              <div class="sys-item">
+                <div class="sys-key">Usage</div>
+                <div class="sys-val" id="mem-pct">—</div>
+              </div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-meta"><span>Memory pressure</span><span id="mem-pct2">—%</span></div>
+              <div class="bar-track">
+                <div class="bar-fill" id="mem-bar" style="width: 0%"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- interfaces -->
-      <div class="full-width">
+      <!-- disk -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Disk Usage</span
+          ><span class="badge" id="b-disk">— volumes</span>
+        </div>
+        <div class="panel-body"><div class="disk-list" id="disk-list"></div></div>
+      </div>
+
+      <!-- top processes -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Top Processes</span><span class="badge">by CPU</span>
+        </div>
+        <div class="panel-body" style="padding: 0">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>User</th>
+                <th>CPU %</th>
+                <th>MEM %</th>
+                <th>Command</th>
+              </tr>
+            </thead>
+            <tbody id="proc-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- connections + ports -->
+      <div class="grid-2">
         <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">Network interfaces</span>
-            <span class="panel-badge" id="badge-ifaces">—</span>
+          <div class="panel-head">
+            <span class="panel-title">Active Connections</span
+            ><span class="badge" id="b-conns">—</span>
+          </div>
+          <div class="panel-body" style="padding: 0">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Proto</th>
+                  <th>Local</th>
+                  <th>Remote</th>
+                  <th>Service</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+              <tbody id="conn-list"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Open Ports</span><span class="badge" id="b-ports">—</span>
+          </div>
+          <div class="panel-body" style="padding: 0">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Port</th>
+                  <th>Proto</th>
+                  <th>Service</th>
+                  <th>Process</th>
+                </tr>
+              </thead>
+              <tbody id="port-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- interfaces + docker -->
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Network Interfaces</span
+            ><span class="badge" id="b-ifaces">—</span>
           </div>
           <div class="panel-body" style="padding: 0">
             <div class="iface-list" id="iface-list"></div>
           </div>
         </div>
-      </div>
 
-      <!-- connections -->
-      <div class="full-width">
         <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">Active connections</span>
-            <span class="panel-badge" id="badge-conns">—</span>
+          <div class="panel-head">
+            <span class="panel-title">Docker Containers</span
+            ><span class="badge" id="b-docker">—</span>
           </div>
-          <div class="conn-header">
-            <span>Proto</span><span>Local</span><span>Remote</span><span>Service</span
-            ><span>State</span>
+          <div class="panel-body" style="padding: 0">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Image</th>
+                  <th>Status</th>
+                  <th>Ports</th>
+                </tr>
+              </thead>
+              <tbody id="docker-list"></tbody>
+            </table>
           </div>
-          <div id="conn-list"></div>
         </div>
       </div>
     </div>
+    <!-- /wrap -->
 
     <script>
-      function fmt(bytes) {
-        if (bytes < 1024) return bytes + " B/s";
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB/s";
-        return (bytes / 1024 / 1024).toFixed(2) + " MB/s";
+      // ── helpers ───────────────────────────────────────────────────────────────────
+      function fmt(b) {
+        if (b < 1024) return b + " B/s";
+        if (b < 1048576) return (b / 1024).toFixed(1) + " KB/s";
+        return (b / 1048576).toFixed(2) + " MB/s";
       }
-      function fmtGB(bytes) {
-        return (bytes / 1024 ** 3).toFixed(2);
+      function fmtGB(b) {
+        return (b / 1073741824).toFixed(2) + " GB";
       }
-      function fmtUptime(s) {
-        const h = Math.floor(s / 3600),
-          m = Math.floor((s % 3600) / 60);
-        return `${h}h ${m}m`;
+      function fmtMB(b) {
+        return (b / 1048576).toFixed(0) + " MB";
+      }
+      function clamp(v, lo, hi) {
+        return Math.max(lo, Math.min(hi, v));
       }
 
-      // --- mini canvas chart ---
-      const canvas = document.getElementById("throughput-chart");
+      // ── chart ─────────────────────────────────────────────────────────────────────
+      const canvas = document.getElementById("tp-chart");
       const ctx = canvas.getContext("2d");
-
       function drawChart(history) {
-        const W = canvas.parentElement.offsetWidth;
-        const H = 120;
+        const W = canvas.parentElement.offsetWidth,
+          H = 100;
         canvas.width = W;
         canvas.height = H;
-
         const max = Math.max(...history.map((h) => Math.max(h.in, h.out)), 1);
-        const n = history.length;
-        const step = W / (n - 1);
-
+        const n = history.length,
+          step = W / (n - 1);
         ctx.clearRect(0, 0, W, H);
-
-        // grid lines
-        ctx.strokeStyle = "rgba(255,255,255,0.05)";
+        // grid
+        ctx.strokeStyle = "rgba(255,255,255,0.04)";
         ctx.lineWidth = 1;
         for (let i = 0; i < 4; i++) {
           const y = (H / 4) * i;
@@ -660,158 +942,224 @@
           ctx.lineTo(W, y);
           ctx.stroke();
         }
-
-        // inbound fill
-        ctx.beginPath();
-        history.forEach((h, i) => {
-          const x = i * step;
-          const y = H - (h.in / max) * (H - 10);
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        // fills + lines
+        [
+          [(h) => h.in, "rgba(0,229,255,0.1)", "#00e5ff"],
+          [(h) => h.out, "rgba(167,139,250,0.1)", "#a78bfa"],
+        ].forEach(([val, fill, stroke]) => {
+          ctx.beginPath();
+          history.forEach((h, i) => {
+            const x = i * step,
+              y = H - (val(h) / max) * (H - 8);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          });
+          ctx.lineTo((n - 1) * step, H);
+          ctx.lineTo(0, H);
+          ctx.closePath();
+          ctx.fillStyle = fill;
+          ctx.fill();
+          ctx.beginPath();
+          history.forEach((h, i) => {
+            const x = i * step,
+              y = H - (val(h) / max) * (H - 8);
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = stroke;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
         });
-        ctx.lineTo((n - 1) * step, H);
-        ctx.lineTo(0, H);
-        ctx.closePath();
-        ctx.fillStyle = "rgba(0,229,255,0.1)";
-        ctx.fill();
-
-        // inbound line
-        ctx.beginPath();
-        history.forEach((h, i) => {
-          const x = i * step;
-          const y = H - (h.in / max) * (H - 10);
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        });
-        ctx.strokeStyle = "#00e5ff";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // outbound fill
-        ctx.beginPath();
-        history.forEach((h, i) => {
-          const x = i * step;
-          const y = H - (h.out / max) * (H - 10);
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        });
-        ctx.lineTo((n - 1) * step, H);
-        ctx.lineTo(0, H);
-        ctx.closePath();
-        ctx.fillStyle = "rgba(124,77,255,0.1)";
-        ctx.fill();
-
-        // outbound line
-        ctx.beginPath();
-        history.forEach((h, i) => {
-          const x = i * step;
-          const y = H - (h.out / max) * (H - 10);
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        });
-        ctx.strokeStyle = "#7c4dff";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
       }
 
-      // --- render interfaces ---
-      function renderInterfaces(interfaces) {
+      // ── render functions ──────────────────────────────────────────────────────────
+      function renderSystem(s) {
+        document.getElementById("s-cpu").textContent = s.cpuUsage + "%";
+        document.getElementById("s-cpu-sub").textContent = s.cpuCores + " cores";
+        const freePct = Math.round((s.freeMem / s.totalMem) * 100);
+        document.getElementById("s-mem").textContent = fmtGB(s.freeMem) + " free";
+        document.getElementById("s-mem-sub").textContent = fmtGB(s.totalMem) + " total";
+        document.getElementById("s-load").textContent = s.load.load1.toFixed(2);
+        document.getElementById("s-load-sub").textContent =
+          s.load.load5.toFixed(2) + " / " + s.load.load15.toFixed(2);
+        document.getElementById("s-uptime").textContent = s.uptime;
+        document.getElementById("s-host").textContent = s.hostname;
+        document.getElementById("b-host").textContent = s.hostname;
+        document.getElementById("sys-hostname").textContent = s.hostname;
+        document.getElementById("sys-distro").textContent = s.distro || s.platform;
+        document.getElementById("sys-platform").textContent = s.platform;
+        document.getElementById("sys-arch").textContent = s.arch;
+        document.getElementById("sys-cores").textContent = s.cpuCores + " cores";
+        document.getElementById("sys-uptime").textContent = s.uptime;
+        document.getElementById("cpu-model").textContent = s.cpuModel;
+        document.getElementById("b-cores").textContent = s.cpuCores + " cores";
+        // cpu total bar
+        const cpuPct = clamp(s.cpuUsage, 0, 100);
+        document.getElementById("cpu-total-pct").textContent = cpuPct + "%";
+        const tb = document.getElementById("cpu-total-bar");
+        tb.style.width = cpuPct + "%";
+        tb.className =
+          "bar-fill " +
+          (cpuPct > 90 ? "bar-fill-red" : cpuPct > 70 ? "bar-fill-amber" : "bar-fill-green");
+        // per core
+        const cg = document.getElementById("cores-grid");
+        cg.innerHTML = "";
+        (s.cpuPerCore || []).forEach((pct, i) => {
+          const d = document.createElement("div");
+          d.className = "core-item";
+          const color = pct > 90 ? "var(--red)" : pct > 70 ? "var(--amber)" : "var(--cyan)";
+          d.innerHTML = `<div class="core-label">Core ${i}</div><div class="core-val" style="color:${color}">${pct}%</div><div class="bar-track" style="margin-top:4px"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>`;
+          cg.appendChild(d);
+        });
+        // load
+        document.getElementById("load-1").textContent = s.load.load1.toFixed(2);
+        document.getElementById("load-5").textContent = s.load.load5.toFixed(2);
+        document.getElementById("load-15").textContent = s.load.load15.toFixed(2);
+        const loadPct = clamp(Math.round((s.load.load1 / s.cpuCores) * 100), 0, 100);
+        document.getElementById("load-pct").textContent = loadPct + "%";
+        const lb = document.getElementById("load-bar");
+        lb.style.width = loadPct + "%";
+        lb.className =
+          "bar-fill " +
+          (loadPct > 90 ? "bar-fill-red" : loadPct > 70 ? "bar-fill-amber" : "bar-fill-green");
+        // memory
+        const used = s.totalMem - s.freeMem;
+        const memPct = Math.round((used / s.totalMem) * 100);
+        document.getElementById("mem-total").textContent = fmtGB(s.totalMem);
+        document.getElementById("mem-free").textContent = fmtGB(s.freeMem);
+        document.getElementById("mem-used").textContent = fmtGB(used);
+        document.getElementById("mem-pct").textContent = memPct + "%";
+        document.getElementById("mem-pct2").textContent = memPct + "%";
+        document.getElementById("b-mem").textContent = fmtGB(s.freeMem) + " free";
+        const mb = document.getElementById("mem-bar");
+        mb.style.width = memPct + "%";
+        mb.className =
+          "bar-fill " +
+          (memPct > 90 ? "bar-fill-red" : memPct > 70 ? "bar-fill-amber" : "bar-fill-green");
+      }
+
+      function renderThroughput(tp) {
+        const i = fmt(tp.in),
+          o = fmt(tp.out);
+        document.getElementById("s-in").textContent = i;
+        document.getElementById("s-out").textContent = o;
+        document.getElementById("tp-in").innerHTML = i.replace(
+          /([A-Za-z\/]+)$/,
+          '<span class="tp-unit">$1</span>',
+        );
+        document.getElementById("tp-out").innerHTML = o.replace(
+          /([A-Za-z\/]+)$/,
+          '<span class="tp-unit">$1</span>',
+        );
+        drawChart(tp.history);
+      }
+
+      function renderDisk(disks) {
+        const list = document.getElementById("disk-list");
+        list.innerHTML = "";
+        document.getElementById("b-disk").textContent = disks.length + " volumes";
+        disks.forEach((d) => {
+          const pct = clamp(d.pct, 0, 100);
+          const color = pct > 90 ? "var(--red)" : pct > 70 ? "var(--amber)" : "var(--cyan)";
+          const el = document.createElement("div");
+          el.className = "disk-item";
+          el.innerHTML = `
+      <div class="disk-meta">
+        <span class="disk-mount">${d.mount}</span>
+        <span class="disk-info">${d.used}M / ${d.size}M &nbsp;·&nbsp; <span style="color:${color}">${pct}%</span> &nbsp;·&nbsp; ${d.fstype}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+    `;
+          list.appendChild(el);
+        });
+      }
+
+      function renderProcesses(procs) {
+        const tbody = document.getElementById("proc-list");
+        tbody.innerHTML = "";
+        procs.forEach((p) => {
+          const cpuColor = p.cpu > 50 ? "var(--red)" : p.cpu > 20 ? "var(--amber)" : "var(--text)";
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td style="color:var(--muted)">${p.pid}</td><td>${p.user}</td><td style="color:${cpuColor};font-weight:700">${p.cpu.toFixed(1)}%</td><td style="color:var(--purple)">${p.mem.toFixed(1)}%</td><td style="color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.command}</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderConnections(conns) {
+        const tbody = document.getElementById("conn-list");
+        tbody.innerHTML = "";
+        document.getElementById("b-conns").textContent = conns.length + " active";
+        conns.slice(0, 20).forEach((c) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td style="color:var(--amber);font-weight:700">${c.protocol}</td><td>${c.localAddress}:${c.localPort}</td><td style="color:var(--muted)">${c.remoteAddress}:${c.remotePort}</td><td><span class="tag tag-amber">${c.service}</span></td><td class="${c.state}">${c.state}</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderPorts(ports) {
+        const tbody = document.getElementById("port-list");
+        tbody.innerHTML = "";
+        document.getElementById("b-ports").textContent = ports.length + " open";
+        ports.forEach((p) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td style="color:var(--cyan);font-weight:700">${p.port}</td><td><span class="tag tag-muted">${p.proto}</span></td><td>${p.name}</td><td style="color:var(--muted)">${p.process}</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderInterfaces(ifaces) {
         const list = document.getElementById("iface-list");
         list.innerHTML = "";
-        document.getElementById("badge-ifaces").textContent = interfaces.length + " total";
-
-        interfaces.forEach((iface) => {
+        document.getElementById("b-ifaces").textContent = ifaces.length + " total";
+        ifaces.forEach((f) => {
+          const cls = f.internal ? "tag-muted" : f.family === "IPv6" ? "tag-purple" : "tag-cyan";
+          const lbl = f.internal ? "loopback" : f.family;
           const row = document.createElement("div");
           row.className = "iface-row";
-          const familyClass = iface.internal ? "loop" : iface.family === "IPv6" ? "v6" : "v4";
-          const familyLabel = iface.internal ? "loopback" : iface.family;
-          row.innerHTML = `
-      <span class="iface-name">${iface.name}</span>
-      <span class="iface-addr">${iface.address}</span>
-      <span class="iface-family ${familyClass}">${familyLabel}</span>
-    `;
+          row.innerHTML = `<span style="font-weight:600">${f.name}</span><span style="color:var(--cyan)">${f.address}</span><span class="tag ${cls}">${lbl}</span>`;
           list.appendChild(row);
         });
       }
 
-      // --- render connections ---
-      function renderConnections(connections) {
-        const list = document.getElementById("conn-list");
-        list.innerHTML = "";
-        document.getElementById("badge-conns").textContent = connections.length + " active";
-        document.getElementById("stat-conns").textContent = connections.length;
-
-        connections.forEach((c) => {
-          const row = document.createElement("div");
-          row.className = "conn-row";
-          row.innerHTML = `
-      <span class="proto">${c.protocol}</span>
-      <span class="addr"><span>${c.localAddress}</span>:${c.localPort}</span>
-      <span class="addr"><span>${c.remoteAddress}</span>:${c.remotePort}</span>
-      <span><span class="service-badge">${c.service}</span></span>
-      <span class="state ${c.state}">${c.state}</span>
-    `;
-          list.appendChild(row);
+      function renderDocker(containers) {
+        const tbody = document.getElementById("docker-list");
+        tbody.innerHTML = "";
+        document.getElementById("b-docker").textContent = containers.length + " containers";
+        if (!containers.length) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="4" style="color:var(--muted);text-align:center;padding:16px">No containers found</td>`;
+          tbody.appendChild(tr);
+          return;
+        }
+        containers.forEach((c) => {
+          const tr = document.createElement("tr");
+          const statusTag = c.running
+            ? `<span class="tag tag-green">running</span>`
+            : `<span class="tag tag-red">stopped</span>`;
+          tr.innerHTML = `<td style="font-weight:600">${c.name || "—"}</td><td style="color:var(--muted)">${c.image || "—"}</td><td>${statusTag}</td><td style="color:var(--muted);font-size:10px">${c.ports}</td>`;
+          tbody.appendChild(tr);
         });
       }
 
-      // --- render system ---
-      function renderSystem(sys) {
-        document.getElementById("sys-host").textContent = sys.hostname;
-        document.getElementById("sys-platform").textContent = sys.platform;
-        document.getElementById("sys-arch").textContent = sys.arch;
-        document.getElementById("sys-cores").textContent = sys.cpuCores + " cores";
-        document.getElementById("sys-cpu").textContent = sys.cpuModel;
-        document.getElementById("badge-host").textContent = sys.hostname;
-
-        const used = sys.totalMem - sys.freeMem;
-        const pct = Math.round((used / sys.totalMem) * 100);
-        document.getElementById("mem-pct").textContent = pct + "%";
-        const bar = document.getElementById("mem-bar");
-        bar.style.width = pct + "%";
-        bar.className = "mem-bar-fill" + (pct > 90 ? " crit" : pct > 70 ? " warn" : "");
-
-        document.getElementById("stat-mem").textContent = fmtGB(sys.freeMem) + " GB";
-        document.getElementById("stat-mem-sub").textContent = `of ${fmtGB(sys.totalMem)} GB total`;
-      }
-
-      // --- connect to SSE ---
+      // ── SSE ───────────────────────────────────────────────────────────────────────
       const es = new EventSource("/events");
-
       es.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-
-        // timestamp
-        document.getElementById("timestamp").textContent = new Date(
-          data.timestamp,
-        ).toLocaleTimeString();
-
-        // throughput
-        const inVal = fmt(data.throughput.in);
-        const outVal = fmt(data.throughput.out);
-        document.getElementById("stat-in").textContent = inVal;
-        document.getElementById("stat-out").textContent = outVal;
-        document.getElementById("tp-in").innerHTML = inVal.replace(
-          /([A-Z\/]+)$/,
-          '<span class="tp-unit">$1</span>',
-        );
-        document.getElementById("tp-out").innerHTML = outVal.replace(
-          /([A-Z\/]+)$/,
-          '<span class="tp-unit">$1</span>',
-        );
-
-        drawChart(data.throughput.history);
-        renderInterfaces(data.interfaces);
-        renderConnections(data.connections);
-        renderSystem(data.system);
+        const d = JSON.parse(e.data);
+        document.getElementById("ts").textContent = new Date(d.timestamp).toLocaleTimeString();
+        renderSystem(d.system);
+        renderThroughput(d.throughput);
+        renderDisk(d.disk || []);
+        renderProcesses(d.processes || []);
+        renderConnections(d.connections || []);
+        renderPorts(d.ports || []);
+        renderInterfaces(d.interfaces || []);
+        renderDocker(d.docker || []);
       };
-
       es.onerror = () => {
-        document.querySelector(".status-pill").style.background = "rgba(255,82,82,.1)";
-        document.querySelector(".status-pill").style.color = "#ff5252";
-        document.querySelector(".status-pill").innerHTML =
-          '<div style="width:6px;height:6px;border-radius:50%;background:#ff5252"></div> Disconnected';
+        document.querySelector(".pill-live").style.background = "rgba(248,113,113,.1)";
+        document.querySelector(".pill-live").style.color = "var(--red)";
+        document.querySelector(".pill-live").innerHTML =
+          '<div style="width:5px;height:5px;border-radius:50%;background:var(--red)"></div>Disconnected';
       };
-
-      window.addEventListener("resize", () => {
-        // redraw chart on resize
-      });
+      window.addEventListener("resize", () => drawChart([]));
     </script>
   </body>
 </html>
